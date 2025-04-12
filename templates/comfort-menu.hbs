@@ -1,0 +1,29 @@
+<div class="comfort-items-wrapper">
+<div class="comfort-total">
+  {{localize "COMFORT.TotalComfort"}} : <strong class="comfort-total-value">{{totalComfort}}</strong>
+</div>
+<div class="comfort-grid">
+  {{#if items.length}}
+    {{#each items}}
+      <div class="comfort-item">
+        <img src="{{this.img}}" width="64" height="64"/>
+        <div class="comfort-name">{{this.name}}</div>
+        <small class="comfort-bonus">{{localize "COMFORT.ComfortLabel"}} : +{{this.comfort}}</small>
+        {{#if ../sceneIsHome}}
+        <button class="comfort-place" data-uuid="{{this.uuid}}">
+            {{#if ../isBypass}}
+            <span class="comfort-badge">{{localize "COMFORT.ComfortGMBadge"}}</span>
+            {{/if}}
+            {{localize "COMFORT.Place"}}
+        </button>
+        {{else}}
+        <div class="disabled-message">{{localize "COMFORT.BadScene"}}</div>
+        {{/if}}
+
+      </div>
+    {{/each}}
+  {{else}}
+    <p class="no-furniture">{{localize "COMFORT.NoFurniture"}}</p>
+  {{/if}}
+</div>
+</div>

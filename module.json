@@ -1,0 +1,68 @@
+{
+  "id": "comfort-system",
+  "title": "Comfort System",
+  "description": "Automates the comfort system for Etrian Odyssey TTRPG.",
+
+  "version": "1.0.0",
+  "authors": [
+    { "name": "Jeido_Uran",
+    "discord": "jeido_uran"
+    }
+  ],
+  "socket": false,
+  "scripts": [],
+  "esmodules": [
+      "scripts/main.js",
+      "scripts/loottypes-script.js",
+      "scripts/comfort-app.js",
+      "scripts/settings.js"
+  ],
+  "styles": ["styles/styles.css"],
+  "templates": [
+  "templates/comfort-menu.hbs"
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "4.2.2",
+          "maximum": "4.9.99"
+        }
+      }
+    ],
+    
+    "requires": [
+
+    ]
+  },
+  "packs": [
+    {
+      "name": "comfort-system-test-furnitures",
+      "label": "Comfort System Test Furnitures",
+      "path": "./packs/test-furnitures",
+      "module": "world",
+      "type": "Item",
+      "system": "dnd5e",
+      "lang": []
+    }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
+    }
+  ],
+  "compatibility": {
+    "minimum": "12.331",
+    "verified": "12.331",
+    "maximum": "12.999"
+  }
+}
