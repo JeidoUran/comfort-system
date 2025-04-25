@@ -71,7 +71,7 @@ Hooks.on("renderItemSheetV2", (sheet, html, data) => {
           name: "comfort-menu",
           title: game.i18n.localize("COMFORT.ButtonTitle"),
           icon: "fas fa-couch",
-          order: 7,
+          order: 6,
           onClick: () => {
             new ComfortMenu().render(true);
           },
@@ -90,50 +90,58 @@ Hooks.on("renderItemSheetV2", (sheet, html, data) => {
       }
     });
 
-  Hooks.on("renderActorSheet5eCharacter", (sheet, html, data) => {
-    const bastionTab = html.find('.tab[data-tab="bastion"]');
-    if (!bastionTab.length) return;
-  
-  const descriptionBox = html[0].querySelector('.tab[data-tab="bastion"] .description');
-  if (!descriptionBox) return;
-  
-  const totalComfort = getTotalComfortValue();
-
-  const openMenuLabel = game.i18n.localize("COMFORT.OpenMenu");
-  const totalComfortLabel = game.i18n.localize("COMFORT.TotalComfort");
-  const comfortLabel = game.i18n.localize("COMFORT.ComfortLabel");
-
-  const btnCard = $(`
-    <section class="comfort">
-      <h3 class="icon"><i class="fas fa-couch"></i><span class="roboto-upper"> ${comfortLabel}</span></h3>
-      <div class="card-content">
-        <button type="button" class="comfort-bastion-button">
-          ${openMenuLabel}
-        </button>
-        <p style="margin-top: 0.5em;width: 100%;border: none;box-shadow: none;font-style: italic;color: var(--color-text-dark-5);">
-          ${totalComfortLabel} :
-          <strong class="comfort-total-bastion">${totalComfort}</strong>
-        </p>
-      </div>
-    </section>
-  `);
-  
-  
-    btnCard.find(".comfort-bastion-button").on("click", () => {
-      const actor = sheet.actor;
-      const items = actor.items.filter(i =>
-        i.type === "loot" &&
-        i.system?.type?.value === "furniture"
-      );
-      new ComfortMenu(items).render(true);
-    });
-  
-    if (descriptionBox) {
-        descriptionBox.parentElement.insertBefore(btnCard[0], descriptionBox);
+    Hooks.on("renderActorSheetV2", (sheet, htmlElement, data) => {
+      const html = $(htmlElement);
+      const isV13 = !foundry.utils.isNewerVersion("13.0.0", game.version);
+      const bastionTab = html.find('.tab[data-tab="bastion"]');
+      if (!bastionTab.length) return;
+    
+      let descriptionBox;
+    
+      if (isV13) {
+        // Foundry V13 : on cherche <section class="description">
+        descriptionBox = bastionTab[0].querySelector("section.description");
       } else {
-        bastionTab.append(btnCard);
+        // Foundry V12 : on cherche .description (ancienne classe)
+        descriptionBox = bastionTab[0].querySelector(".description");
       }
-  });
+    
+      if (!descriptionBox) return;
+    
+      const totalComfort = getTotalComfortValue();
+    
+      const openMenuLabel = game.i18n.localize("COMFORT.OpenMenu");
+      const totalComfortLabel = game.i18n.localize("COMFORT.TotalComfort");
+      const comfortLabel = game.i18n.localize("COMFORT.ComfortLabel");
+    
+      const btnCard = $(`
+        <section class="comfort">
+          <h3 class="icon"><i class="fas fa-couch"></i><span class="roboto-upper"> ${comfortLabel}</span></h3>
+          <div class="card-content">
+            <button type="button" class="comfort-bastion-button">
+              ${openMenuLabel}
+            </button>
+            <p style="margin-top: 0.5em;width: 100%;border: none;box-shadow: none;font-style: italic;color: var(--color-text-dark-5);">
+              ${totalComfortLabel} :
+              <strong class="comfort-total-bastion">${totalComfort}</strong>
+            </p>
+          </div>
+        </section>
+      `);
+    
+      btnCard.find(".comfort-bastion-button").on("click", () => {
+        const actor = sheet.actor;
+        const items = actor.items.filter(i =>
+          i.type === "loot" &&
+          i.system?.type?.value === "furniture"
+        );
+        new ComfortMenu(items).render(true);
+      });
+    
+      // Insertion juste avant le bloc "Description"
+      descriptionBox.parentElement.insertBefore(btnCard[0], descriptionBox);
+    });
+    
 
   Hooks.on("updateTile", (tile, changes, options, userId) => {
     const sceneId = game.settings.get("comfort-system", "bastionSceneId");

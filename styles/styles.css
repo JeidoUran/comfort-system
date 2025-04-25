@@ -97,6 +97,7 @@
   
   .comfort-bastion-button {
     color: var(--color-text-dark-primary);
+    width: 100%;
   }
   
   .comfort-label {
