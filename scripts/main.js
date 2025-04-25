@@ -60,23 +60,35 @@ Hooks.on("renderItemSheetV2", (sheet, html, data) => {
     }
   });
   
-  Hooks.on("getSceneControlButtons", controls => {
-    // Cherche le contrôle de base "token"
-    const tokenControls = controls.find(c => c.name === "token");
-    if (!tokenControls) return;
-  
-    tokenControls.tools.push({
-      name: "comfort-menu",
-      title: game.i18n.localize("COMFORT.ButtonTitle"),
-      icon: "fas fa-couch", // n'importe quelle icône FontAwesome
-      button: true,
-      onClick: () => {
-        new ComfortMenu().render(true);
-      },
-      visible: game.user.isGM || !!game.user.character // tu peux ajuster ça
+    Hooks.on("getSceneControlButtons", (controls) => {
+      const isV13 = !foundry.utils.isNewerVersion("13.0.0", game.version);
+      
+      const tokensControl = isV13 ? controls.tokens : controls.find(control => control.name === "token");
+      if (!tokensControl) return;
+      
+      if (isV13) {
+        tokensControl.tools["comfort-menu"] = {
+          name: "comfort-menu",
+          title: game.i18n.localize("COMFORT.ButtonTitle"),
+          icon: "fas fa-couch",
+          order: 7,
+          onClick: () => {
+            new ComfortMenu().render(true);
+          },
+          button: true
+        };
+      } else {
+        tokensControl.tools.push({
+          name: "comfort-menu",
+          title: game.i18n.localize("COMFORT.ButtonTitle"),
+          icon: "fas fa-couch",
+          onClick: () => {
+            new ComfortMenu().render(true);
+          },
+          button: true
+        });
+      }
     });
-  });
-  
 
   Hooks.on("renderActorSheet5eCharacter", (sheet, html, data) => {
     const bastionTab = html.find('.tab[data-tab="bastion"]');
